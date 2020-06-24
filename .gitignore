@@ -3,6 +3,8 @@
 .env
 *.pyc
 
+report.html
+
 # golife test
 tests/golife
 screens/golife
