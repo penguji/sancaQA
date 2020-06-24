@@ -1,3 +1,4 @@
+![python](python.gif)
 # SancaQA 🐍
 Simplify Mobile Automation Test
 
