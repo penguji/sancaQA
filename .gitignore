@@ -1,2 +1,12 @@
 .idea/
+.DS_Store
+.env
 *.pyc
+
+# golife test
+tests/golife
+screens/golife
+
+# gojek test
+tests/gojek
+screens/gojek

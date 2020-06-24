@@ -1,17 +1,17 @@
 [[source]]
-url = "https://pypi.python.org/simple"
-verify_ssl = true
 name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
 
 [packages]
-selenium = "==3.141.0"
-appium-python-client = "*"
-selene = "==1.0.0a13"
 pytest = "*"
+appium-python-client = "*"
+pytest-html = "*"
+eyes-selenium = "*"
+pytest-xdist = "*"
 python-dotenv = "*"
-grappa = "*"
-allure-pytest = "*"
 
 [requires]
 python_version = "3.7"
-

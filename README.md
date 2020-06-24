@@ -1,12 +1,13 @@
-# SANCAppium
-
--------
-
-Example how I'm currently learning pytest to make automation framework in python for mobile app
-
-## Project setup
-- `pipenv install`
-
-## Run the project
+# SancaQA 🐍
+Simplify Mobile Automation Test
 
 
+## Features
+- Easy to write automated test of mobile app
+- Support Android and Ios
+- Human readable
+- Enable Visual testing (soon)
+
+
+## Setup
+Run command `pipenv install` to install required libraries inside python virtual environment (pipenv)

@@ -1,46 +1,25 @@
-import pytest
 import os
-from appium import webdriver
-from app import devices
 
-PATH = lambda p: os.path.abspath(
-	os.path.join(os.path.dirname(__file__), p)
-)
+import pytest
+from applitools.selenium import Eyes
+
+from library.drivers import get_appium_driver, close_appium_driver
+
 
 @pytest.fixture()
-def driver_setup(request):
-	_capabilities = {
-		'ANDROID': {
-			'platformName': 'Android',
-			'platformVersion': devices.ANDROID_VERSION,
-			'deviceName': devices.ANDROID_DEVICE_NAME,
-			'noReset': True,
-			'newCommandTimeout': devices.APPIUM_TIMEOUT,
-			'automationName': 'UiAutomator2',
-			'appPackage': devices.ANDROID_APP_PACKAGE,
-			'appActivity': devices.ANDROID_APP_ACTIVITY,
-			'browserName': ''
-		},
-		'IOS': {
-			'version': '',
-			'platformName': '',
-			'platformVersion': '',
-			'deviceName': '',
-			'app': '',
-			'noReset': '',
-			'fullReset': '',
-			'newCommandTimeout': ''
-		}
-	}.get(devices.PLATFORM)
+def driver():
+    driver = get_appium_driver()
+    driver.implicitly_wait(10)
+    yield driver
+    close_appium_driver()
 
-	print('_capabilities sekarang:',_capabilities)
 
-	request.instance.driver = webdriver.Remote(
-		command_executor=devices.APPIUM_SERVER,
-		desired_capabilities=_capabilities
-	)
-
-	yield
-
-	print('proses teardown')
-	request.instance.driver.quit()
+@pytest.fixture()
+def eyes(request):
+    eyes = Eyes()
+    if os.environ.get("APPLITOOLS_API_KEY") is not None:
+        print("Keynya: ", os.environ.get("APPLITOOLS_API_KEY"))
+        eyes.api_key = os.environ.get("APPLITOOLS_API_KEY")
+        eyes.open(driver, app_name="Golife", test_name=request.node.name)
+    yield eyes
+    eyes.abort()
