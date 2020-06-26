@@ -1,6 +1,6 @@
 import subprocess
 
-from library import shell
+from library import shell, configs
 from library.devices import get_device_id
 from library.parallel import IS_PARALLEL
 
@@ -83,3 +83,60 @@ def get_rcepageage_version():
     :return: (Version date)
     """
     return adb_shell("dumpsys package cn.rongcloud.rce | findstr version").split()
+
+
+def app_to_background():
+    adb_shell("input keyevent 3")
+
+
+def app_to_foreground():
+    adb_shell(f"monkey -p {configs.APP_NAME} -c android.intent.category.LAUNCHER 1")
+
+
+def clear_app_data():
+    adb_shell(f"pm clear {configs.APP_NAME}")
+
+
+def close_app():
+    adb_shell(f"am force-stop {configs.APP_NAME}")
+
+
+def grant_revoke_permission(permission_type: str, permission_name: str):
+    adb_shell(f"pm {permission_type} {configs.APP_NAME} {permission_name} ")
+    pass
+
+
+def heads_up_notification(enabled=True):
+    cmd = "settings put global heads_up_notifications_enabled {}"
+    status = "1" if enabled else "0"
+    adb_shell(cmd.format(status))
+
+
+def open_deeplink(url: str):
+    adb_shell(f"am start -a android.intent.action.VIEW -d {url}")
+
+
+def relaunch_app():
+    adb_shell(f"am start {configs.APP_NAME}/{configs.APP_ANDROID_ACTIVITY}")
+
+
+def set_gps(enabled=True):
+    cmd = "settings put secure location_providers_allowed {}"
+    status = "+gps" if enabled else "-gps"
+    adb_shell(cmd.format(status))
+
+
+def tap_back():
+    adb_shell("input keyevent 4")
+
+
+def tap_at_coordinates(x: int, y: int):
+    adb_shell(f"input tap {x} {y}")
+
+
+def typing(text: str):
+    adb_shell(f"input text {text}")
+
+
+def uninstall_app():
+    adb(f"uninstall {configs.APP_NAME}")

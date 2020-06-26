@@ -25,6 +25,7 @@ def test_page_object_style(driver):
     time.sleep(3)
     # driver.find_element_by_id("btn_login").click()
     login_screen = Login()
+
     login_screen.btn_login.click()
     time.sleep(2)
     login_screen.go_back()
