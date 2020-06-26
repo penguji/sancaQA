@@ -24,21 +24,15 @@ class Element:
 
     def __get__(self, instance, owner):
         self.context = instance.driver
-        print('ada di __GET__')
-        print('context:', self.context)
         return self._search_element()
 
     def __getattribute__(self, item):
         if hasattr(Element, item):
-            print('masuk kondisional di __GETATTRIBUTE', item)
             return object.__getattribute__(self, item)
-        print('Dalemannya __GETATTRIBUTE', item)
         return self._search_element().__getattribute__(item)
 
     def __getitem__(self, item):
-        print('Dalemannya __getitem__', item)
         el = self._search_element()
-        print('el:', el)
         return el.__getitem__(item)
 
     def _search_element(self) -> WebElement:
@@ -48,7 +42,6 @@ class Element:
 
         if not self.waiter:
             self.waiter = WebDriverWait(self.context, self.wait_time)
-        print('Searching element: ', self.selector)
         el = self.waiter.until(EC.presence_of_element_located(self.selector))
         el.__class__ = WebElement
         return el
