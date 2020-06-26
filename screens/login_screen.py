@@ -1,10 +1,15 @@
+"""
+Classical "Page object model" approach
+Alternative "Direct module usage" Style as in login.py file
+"""
+
 from library.ui import Element, Elements
 from screens.BaseScreens import Screens
 
 
 class Login(Screens):
     btn_login = Element(android_by=('id', 'btn_login'), ios_by=('id', 'btn_logs'))
-    btn_signup = Element(android_by=('id', 'btn_signup'), short_wait=True)
+    btn_signup = Element(android_by=('id', 'btn_signup'), long_wait=True)
     txt_all = Elements(android_by=('xpath', '//android.widget.TextView'))
 
     def __init__(self):

@@ -2,6 +2,7 @@ import time
 
 from conftest import validate_screen
 from library import adb
+from screens import login
 from screens.login_screen import Login
 
 
@@ -19,7 +20,7 @@ def test_login(driver, eyes):
     time.sleep(2)
 
 
-def test_login_po(driver):
+def test_page_object_style(driver):
     print("login")
     time.sleep(3)
     # driver.find_element_by_id("btn_login").click()
@@ -33,3 +34,16 @@ def test_login_po(driver):
     time.sleep(2)
     login_screen.ambil_text()
     time.sleep(2)
+
+
+def test_module_style(driver):
+    time.sleep(3)
+    print("Text: ", login.BTN_LOGIN.text)
+    login.BTN_LOGIN.click()
+    time.sleep(3)
+    driver.back()
+    time.sleep(3)
+    login.BTN_SIGNUP.click()
+    driver.back()
+    for txt in login.TXT_ALL:
+        print(txt.text)
