@@ -11,6 +11,7 @@ APP_NAME = os.getenv("TEST_APP_NAME")
 APP_ANDROID_ACTIVITY = os.getenv("TEST_APP_ANDROID_ACTIVITY")
 IS_ANDROID = PLATFORM.upper() == "ANDROID"
 IS_IOS = PLATFORM.upper() == "IOS"
+IMPLICIT_WAIT = int(os.getenv("IMPLICIT_TIMEOUT", "3"))
 
 CAPABILITIES = {
     "android": {
