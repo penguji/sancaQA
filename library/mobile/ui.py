@@ -9,7 +9,7 @@ from library.mobile.configs import IS_ANDROID
 from library.mobile.drivers import get_driver
 
 
-class WebElementPatch(WebElement):
+class MobileElementPatch(WebElement):
     def find_text(self, text: str, case_sensitive=True):
         selector_strict = {
             "android": f"//android.widget.TextView[@text='{text}']",
@@ -23,10 +23,8 @@ class WebElementPatch(WebElement):
         selector = selector_strict if case_sensitive else selector_case_insensitive
         # Let's assume this method call when UI ready
         # so implicit timeout we set to 0 for make it fast
-        get_driver().implicitly_wait(0)
-        list_data = self.find_elements(by=By.XPATH, value=selector.format(text))
+        list_data = self.find_elements(by=By.XPATH, value=selector)
         # restore back implicit wait
-        get_driver().implicitly_wait(configs.IMPLICIT_WAIT)
         return list_data
 
     def has_text(self, text: str, case_sensitive=True) -> bool:
@@ -64,7 +62,7 @@ class Element:
         el = self._search_element()
         return el.__getitem__(item)
 
-    def _search_element(self) -> WebElementPatch:
+    def _search_element(self) -> MobileElementPatch:
         if not self.context:
             # if instance has no driver, fill it with current driver
             self.context = get_driver()
@@ -72,7 +70,7 @@ class Element:
         if not self.waiter:
             self.waiter = WebDriverWait(self.context, self.wait_time)
         el = self.waiter.until(EC.presence_of_element_located(self.selector))
-        el.__class__ = WebElementPatch
+        el.__class__ = MobileElementPatch
         return el
 
 

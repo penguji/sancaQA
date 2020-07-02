@@ -29,7 +29,6 @@ def hook_module_test_golife(request):
 def hook_each_test_golife(request):
     global GOLIFE_CAPS
     driver = create_appium_session(get_device_id(), GOLIFE_CAPS)
-    driver.implicitly_wait(5)
     print("=== Before Test ===")
 
     def tear_down():
