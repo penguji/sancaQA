@@ -47,16 +47,14 @@ def get_appium_server():
     # Load default capabilities per platform
     caps_path = os.path.join(configs.PROJECT_PATH, "configs", "capabilities.json")
     with open(caps_path) as caps_file:
-        appium_config = json.load(caps_file).get('appium')
-    port = parallel.device_index(appium_config['availablePorts'])
-    return "http://{0}:{1}/wd/hub".format(appium_config['ip'], port)
+        appium_config = json.load(caps_file).get("appium")
+    port = parallel.device_index(appium_config["availablePorts"])
+    return "http://{0}:{1}/wd/hub".format(appium_config["ip"], port)
 
 
 def create_appium_session(udid: str, capabilities: dict):
     return SingletonFactory.build(
-        udid,
-        command_executor=get_appium_server(),
-        desired_capabilities=capabilities,
+        udid, command_executor=get_appium_server(), desired_capabilities=capabilities,
     )
 
 

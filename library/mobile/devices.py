@@ -1,4 +1,4 @@
-from library.mobile import shell, configs, parallel
+from library.mobile import configs, parallel, shell
 
 
 def get_adb_devices():
@@ -20,7 +20,7 @@ def android_udid():
 
 
 def iphone_udid() -> str:
-    list_simulator = udid_from_configs('ios')
+    list_simulator = udid_from_configs("ios")
     return parallel.device_index(list_simulator)
 
 
@@ -45,4 +45,4 @@ def udid_from_configs(platform: str):
     with open(caps_path) as caps_file:
         device_list = json.load(caps_file).get(platform)
 
-    return [dev['udid'] for dev in device_list]
+    return [dev["udid"] for dev in device_list]

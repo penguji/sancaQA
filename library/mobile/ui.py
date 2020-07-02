@@ -1,8 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 from library.mobile import configs
 from library.mobile.configs import IS_ANDROID
@@ -13,11 +13,11 @@ class MobileElementPatch(WebElement):
     def find_text(self, text: str, case_sensitive=True):
         selector_strict = {
             "android": f"//android.widget.TextView[@text='{text}']",
-            "ios": f"//*[@label='{text}' and @visible='true']"
+            "ios": f"//*[@label='{text}' and @visible='true']",
         }.get(configs.PLATFORM)
         selector_case_insensitive = {
             "android": f"//android.widget.TextView[lower-case(@text)='{text.lower()}']",
-            "ios": f"//*[@label='{text.lower()}' and @visible='true']"
+            "ios": f"//*[@label='{text.lower()}' and @visible='true']",
         }.get(configs.PLATFORM)
 
         selector = selector_strict if case_sensitive else selector_case_insensitive

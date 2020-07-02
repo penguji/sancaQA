@@ -1,5 +1,7 @@
 import os
+
 from dotenv import load_dotenv
+
 from library.mobile.devices import android_udid
 
 load_dotenv()
@@ -12,11 +14,14 @@ IS_ANDROID = PLATFORM.upper() == "ANDROID"
 IS_IOS = PLATFORM.upper() == "IOS"
 IMPLICIT_WAIT = int(os.getenv("IMPLICIT_TIMEOUT", "3"))
 IS_RUN_REMOTE = os.getenv("TEST_REMOTE", "false").lower() == "true"
-PROJECT_PATH = os.path.dirname(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+PROJECT_PATH = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+)
 
 
 def load_caps(platform: str, app_caps: str = None):
     import json
+
     # Load default capabilities per platform
     caps_path = os.path.join(PROJECT_PATH, "configs", "capabilities.json")
     with open(caps_path) as caps_file:
@@ -32,7 +37,7 @@ def load_caps(platform: str, app_caps: str = None):
         if IS_IOS:
             pass
         else:
-            default_caps['udid'] = android_udid()
+            default_caps["udid"] = android_udid()
 
     return default_caps
 

@@ -1,4 +1,4 @@
-from library.mobile import shell, configs
+from library.mobile import configs, shell
 from library.mobile.devices import get_device_id
 from library.mobile.parallel import IS_PARALLEL
 
