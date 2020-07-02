@@ -1,0 +1,18 @@
+{
+  "android": [
+    {
+      "name": "Samsung J7",
+      "udid": "520021f0fec984c1"
+    },
+    {
+      "name": "Samsung S10",
+      "udid": "520021f0fec984c1"
+    }
+  ],
+  "ios": [
+    {
+      "name": "iPhone 8",
+      "udid": "520021f0fec984c1"
+    }
+  ]
+}

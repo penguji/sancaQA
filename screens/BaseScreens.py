@@ -1,6 +1,6 @@
-from library.drivers import get_appium_driver
+from library.drivers import get_driver
 
 
 class Screens:
     def __init__(self):
-        self.driver = get_appium_driver()
+        self.driver = get_driver()

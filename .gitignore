@@ -5,9 +5,6 @@
 
 report.html
 
-# golife test
-tests/golife
-screens/golife
 
 # gojek test
 tests/gojek

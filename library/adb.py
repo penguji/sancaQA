@@ -41,7 +41,7 @@ def disconnect_android_tcp(self, ip):
     return adb("disconnect {0}:5555".format(ip))
 
 
-def get_device_id():
+def get_serial_no():
     """
     Get device id，return serialNo
     """

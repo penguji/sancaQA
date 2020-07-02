@@ -1,7 +1,6 @@
 from appium import webdriver
 
 from library import configs, parallel
-from library.configs import APPIUM_SERVER
 from library.devices import get_device_id
 
 
@@ -12,6 +11,13 @@ class SingletonFactory(object):
 
     # a mapping between the name of a class and the instance.
     mappings = {}
+
+    @staticmethod
+    def get_instance(device_id: str):
+        if device_id in SingletonFactory.mappings:
+            return SingletonFactory.mappings[device_id]
+        else:
+            return None
 
     @staticmethod
     def build(device_id, **constructor_args):
@@ -25,10 +31,9 @@ class SingletonFactory(object):
         """
 
         # if the class instance is mapped, then retrieve it.
-        if str(device_id) in SingletonFactory.mappings:
-            instance_ = SingletonFactory.mappings[str(device_id)]
+        instance_ = SingletonFactory.get_instance(device_id)
         # else create the instance and map it to the class name.
-        else:
+        if not instance_:
             instance_ = webdriver.Remote(**constructor_args)
             SingletonFactory.mappings[str(device_id)] = instance_
 
@@ -36,25 +41,41 @@ class SingletonFactory(object):
 
 
 def get_appium_server():
-    ports = [4723, 4724, 4725]
-    return APPIUM_SERVER.format(parallel.device_index(ports))
+    import json
+    import os
+    project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+    # Load default capabilities per platform
+    caps_path = os.path.join(project_path, "configs", "capabilities.json")
+    with open(caps_path) as caps_file:
+        appium_config = json.load(caps_file).get('appium')
+    port = parallel.device_index(appium_config['availablePorts'])
+    return "http://{0}:{1}/wd/hub".format(appium_config['ip'], port)
 
 
-def get_appium_driver() -> webdriver.Remote:
-    """
-    Return the same instance to the Appium driver.
-    """
+def create_appium_session(udid: str, capabilities: dict):
     return SingletonFactory.build(
-        get_device_id(),
+        udid,
         command_executor=get_appium_server(),
-        desired_capabilities=configs.CAPABILITIES,
+        desired_capabilities=capabilities,
     )
 
 
-def close_appium_driver():
+def get_driver(udid: str = get_device_id()) -> webdriver.Remote:
+    """
+    Return the same instance to the Appium driver.
+    """
+    if udid in SingletonFactory.mappings:
+        return SingletonFactory.mappings[udid]
+    else:
+        return create_appium_session(get_device_id(), configs.CAPABILITIES)
+
+
+def quit_driver():
     """
     Close Mobile app and delete reference at singleton, so device_id can re-initiate
     """
-    driver = get_appium_driver()
+    udid = get_device_id()
+    driver = get_driver(udid)
     driver.quit()
-    SingletonFactory.mappings.pop(get_device_id())
+    SingletonFactory.mappings.pop(udid)

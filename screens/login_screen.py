@@ -9,7 +9,7 @@ from screens.BaseScreens import Screens
 
 class Login(Screens):
     btn_login = Element(android_by=('id', 'btn_login'), ios_by=('id', 'btn_logs'))
-    btn_signup = Element(android_by=('id', 'btn_signup'), long_wait=True)
+    btn_signup = Element(android_by=('id', 'btn_signup'), wait_time=True)
     txt_all = Elements(android_by=('xpath', '//android.widget.TextView'))
 
     def __init__(self):
