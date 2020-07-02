@@ -44,9 +44,10 @@ def find_text(something: str, inside_selector: tuple = None, raise_error=True):
 
 
 def as_element(something=None, at: tuple = None, raise_error=True):
-    if something is None and isinstance(at, tuple):
+    if something is None and at is not None:
         return driver().find_element(*at)
-
+    if isinstance(something, tuple):
+        return driver().find_element(*something)
     if isinstance(something, str):
         return find_text(something, at, raise_error)
     if is_element(something):
@@ -99,3 +100,8 @@ def write(text, at=None, enter=False):
 def hide_keyboard():
     sleep(1)
     # driver().hide_keyboard(strategy='tapOutside')
+
+
+def grab_text(at):
+    el = as_element(at)
+    return el.text
