@@ -7,33 +7,36 @@ load_dotenv()
 APPIUM_TIMEOUT = 300
 APPIUM_SERVER = os.getenv("APPIUM_SERVER")
 PLATFORM = os.getenv("TEST_PLATFORM", "android").lower()
-APP_NAME = os.getenv("TEST_APP_NAME")
-APP_ANDROID_ACTIVITY = os.getenv("TEST_APP_ANDROID_ACTIVITY")
+APP_CAPS = os.getenv("TEST_CAPS")
 IS_ANDROID = PLATFORM.upper() == "ANDROID"
 IS_IOS = PLATFORM.upper() == "IOS"
 IMPLICIT_WAIT = int(os.getenv("IMPLICIT_TIMEOUT", "3"))
+IS_RUN_REMOTE = os.getenv("TEST_REMOTE", "false").lower() == "true"
 
-CAPABILITIES = {
-    "android": {
-        "platformName": "Android",
-        "deviceName": "Android",
-        "appPackage": APP_NAME,
-        "appActivity": APP_ANDROID_ACTIVITY,
-        "automationName": "UiAutomator2",
-        "newCommandTimeout": APPIUM_TIMEOUT,
-        "noReset": True,
-        "autoGrantPermissions": True,
-        "udid": android_udid(),
-    },
-    "ios": {
-        "version": "",
-        "platformName": "",
-        "platformVersion": "",
-        "deviceName": "",
-        "app": "",
-        "noReset": "",
-        "fullReset": "",
-        "newCommandTimeout": "",
-        "wdaLocalPort": wda_port(),
-    },
-}.get(PLATFORM)
+
+def load_caps(platform: str, app_caps: str = None):
+    import json
+    import os
+    project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+
+    # Load default capabilities per platform
+    caps_path = os.path.join(project_path, "configs", "capabilities.json")
+    with open(caps_path) as caps_file:
+        default_caps = json.load(caps_file).get(platform)
+
+    if app_caps:
+        # Load and update additional caps for given apps name (file)
+        app_caps_path = os.path.join(project_path, "configs", app_caps)
+        with open(app_caps_path) as caps_file:
+            app_caps = json.load(caps_file).get(platform)
+            default_caps.update(app_caps)
+
+        if IS_IOS:
+            pass
+        else:
+            default_caps['udid'] = android_udid()
+
+    return default_caps
+
+
+CAPABILITIES = load_caps(PLATFORM, APP_CAPS)

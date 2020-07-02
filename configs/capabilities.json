@@ -1,0 +1,35 @@
+{
+  "appium": {
+    "ip": "127.0.0.1",
+    "availablePorts": [4723, 4724, 4725],
+    "wdaLocalPort": [8100, 8101]
+  },
+  "android": {
+    "platformName": "android",
+    "platformVersion": "",
+    "app": "",
+    "automationName":"UIAutomator2",
+    "appPackage": "",
+    "appActivity": "",
+    "deviceName": "android",
+    "noSign": true,
+    "noReset": true,
+    "autoGrantPermissions": true,
+    "gpsEnabled": true,
+    "newCommandTimeout": 300,
+    "ignoreUnimportantViews": true
+  },
+  "ios": {
+    "platformName": "iOS",
+    "app": "",
+    "deviceName": "iPhone",
+    "wdaLaunchTimeout": 8000,
+    "wdaConnectionTimeout": 8000,
+    "preventWDAAttachments": true,
+    "clearSystemFiles": true,
+    "shouldUseSingletonTestManager": false,
+    "simpleIsVisibleCheck": true,
+    "maxTypingFrequency": 10,
+    "autoAcceptAlerts": true
+  }
+}

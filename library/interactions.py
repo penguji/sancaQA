@@ -1,8 +1,8 @@
-from library.drivers import get_appium_driver
+from library.drivers import get_driver
 
 
 def driver():
-    return get_appium_driver()
+    return get_driver()
 
 
 def go_back():

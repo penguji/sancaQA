@@ -5,15 +5,15 @@ from applitools.common import MatchLevel
 from applitools.selenium import Eyes
 
 from library import configs
-from library.drivers import get_appium_driver, close_appium_driver
+from library.drivers import get_driver, quit_driver
 
 
 @pytest.fixture()
 def driver():
-    driver = get_appium_driver()
+    driver = get_driver()
     driver.implicitly_wait(10)
     yield driver
-    close_appium_driver()
+    quit_driver()
 
 
 @pytest.fixture()
@@ -21,7 +21,7 @@ def eyes(request):
     eyes = Eyes()
     if os.environ.get("APPLITOOLS_API_KEY") is not None:
         eyes.api_key = os.getenv("APPLITOOLS_API_KEY")
-        eyes.open( get_appium_driver(), app_name=configs.APP_NAME, test_name=request.node.name)
+        eyes.open(get_driver(), app_name=configs.APP_NAME, test_name=request.node.name)
     yield eyes
     eyes.abort()
 

@@ -1,0 +1,9 @@
+{
+  "android": {
+    "appPackage": "com.gojek.life",
+    "appActivity": "com.gojek.golife.presentation.feature.LifeSplashActivity"
+  },
+  "ios": {
+
+  }
+}

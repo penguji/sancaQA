@@ -6,7 +6,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from library import configs
 from library.configs import IS_ANDROID
-from library.drivers import get_appium_driver
+from library.drivers import get_driver
 
 
 class WebElementPatch(WebElement):
@@ -23,10 +23,10 @@ class WebElementPatch(WebElement):
         selector = selector_strict if case_sensitive else selector_case_insensitive
         # Let's assume this method call when UI ready
         # so implicit timeout we set to 0 for make it fast
-        get_appium_driver().implicitly_wait(0)
+        get_driver().implicitly_wait(0)
         list_data = self.find_elements(by=By.XPATH, value=selector.format(text))
         # restore back implicit wait
-        get_appium_driver().implicitly_wait(configs.IMPLICIT_WAIT)
+        get_driver().implicitly_wait(configs.IMPLICIT_WAIT)
         return list_data
 
     def has_text(self, text: str, case_sensitive=True) -> bool:
@@ -67,7 +67,7 @@ class Element:
     def _search_element(self) -> WebElementPatch:
         if not self.context:
             # if instance has no driver, fill it with current driver
-            self.context = get_appium_driver()
+            self.context = get_driver()
 
         if not self.waiter:
             self.waiter = WebDriverWait(self.context, self.wait_time)
@@ -80,7 +80,7 @@ class Elements(Element):
     def _search_element(self) -> list:
         if not self.context:
             # if instance has no driver, fill it with current driver
-            self.context = get_appium_driver()
+            self.context = get_driver()
 
         if not self.waiter:
             self.waiter = WebDriverWait(self.context, self.wait_time)

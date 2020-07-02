@@ -1,4 +1,4 @@
-from library.drivers import get_appium_driver, close_appium_driver
+from library.drivers import get_driver, quit_driver
 
 
 class Base:
@@ -10,7 +10,7 @@ class Base:
         usually contains tests).
         """
         print("=== Setup Class")
-        cls.driver = get_appium_driver()
+        cls.driver = get_driver()
         cls.driver.implicitly_wait(10)
         # Install app
 
@@ -21,4 +21,4 @@ class Base:
         """
         print("=== Teardown Class")
         # Delete app
-        close_appium_driver()
+        quit_driver()
