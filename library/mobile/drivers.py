@@ -1,7 +1,7 @@
 from appium import webdriver
 
-from library import configs, parallel
-from library.devices import get_device_id
+from library.mobile import configs, parallel
+from library.mobile.devices import get_device_id
 
 
 class SingletonFactory(object):
@@ -43,21 +43,18 @@ class SingletonFactory(object):
 def get_appium_server():
     import json
     import os
-    project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     # Load default capabilities per platform
-    caps_path = os.path.join(project_path, "configs", "capabilities.json")
+    caps_path = os.path.join(configs.PROJECT_PATH, "configs", "capabilities.json")
     with open(caps_path) as caps_file:
-        appium_config = json.load(caps_file).get('appium')
-    port = parallel.device_index(appium_config['availablePorts'])
-    return "http://{0}:{1}/wd/hub".format(appium_config['ip'], port)
+        appium_config = json.load(caps_file).get("appium")
+    port = parallel.device_index(appium_config["availablePorts"])
+    return "http://{0}:{1}/wd/hub".format(appium_config["ip"], port)
 
 
 def create_appium_session(udid: str, capabilities: dict):
     return SingletonFactory.build(
-        udid,
-        command_executor=get_appium_server(),
-        desired_capabilities=capabilities,
+        udid, command_executor=get_appium_server(), desired_capabilities=capabilities,
     )
 
 

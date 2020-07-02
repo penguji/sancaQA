@@ -1,15 +1,13 @@
-from time import sleep
-
 import pytest
 
-from library import adb, configs
-from library.devices import get_device_id
-from library.drivers import get_driver, quit_driver, create_appium_session
+from library.mobile import configs
+from library.mobile.devices import get_device_id
+from library.mobile.drivers import create_appium_session, quit_driver
 
 GOLIFE_CAPS = None
 
 
-@pytest.fixture(autouse=True, scope='module')
+@pytest.fixture(autouse=True, scope="module")
 def hook_module_test_golife(request):
     print("=== Before All ===")
     global GOLIFE_CAPS
@@ -24,17 +22,18 @@ def hook_module_test_golife(request):
     def tear_down():
         print("=== After All ===")
         # Delete App
+
     request.addfinalizer(tear_down)
 
 
 @pytest.fixture(autouse=True)
 def hook_each_test_golife(request):
     global GOLIFE_CAPS
-    driver = create_appium_session(get_device_id(), GOLIFE_CAPS)
-    driver.implicitly_wait(5)
+    create_appium_session(get_device_id(), GOLIFE_CAPS)
     print("=== Before Test ===")
 
     def tear_down():
         print("=== After Test ===")
         quit_driver()
+
     request.addfinalizer(tear_down)

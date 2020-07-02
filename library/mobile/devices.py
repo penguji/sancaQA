@@ -1,4 +1,4 @@
-from library import parallel, configs, shell
+from library.mobile import configs, parallel, shell
 
 
 def get_adb_devices():
@@ -20,7 +20,7 @@ def android_udid():
 
 
 def iphone_udid() -> str:
-    list_simulator = udid_from_configs('ios')
+    list_simulator = udid_from_configs("ios")
     return parallel.device_index(list_simulator)
 
 
@@ -39,11 +39,10 @@ def wda_port() -> int:
 def udid_from_configs(platform: str):
     import json
     import os
-    project_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
     # Load default capabilities per platform
-    caps_path = os.path.join(project_path, "configs", "devices.json")
+    caps_path = os.path.join(configs.PROJECT_PATH, "configs", "devices.json")
     with open(caps_path) as caps_file:
         device_list = json.load(caps_file).get(platform)
 
-    return [dev['udid'] for dev in device_list]
+    return [dev["udid"] for dev in device_list]

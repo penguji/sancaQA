@@ -1,32 +1,30 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
-from library import configs
-from library.configs import IS_ANDROID
-from library.drivers import get_driver
+from library.mobile import configs
+from library.mobile.configs import IS_ANDROID
+from library.mobile.drivers import get_driver
 
 
-class WebElementPatch(WebElement):
+class MobileElementPatch(WebElement):
     def find_text(self, text: str, case_sensitive=True):
         selector_strict = {
             "android": f"//android.widget.TextView[@text='{text}']",
-            "ios": f"//*[@label='{text}' and @visible='true']"
+            "ios": f"//*[@label='{text}' and @visible='true']",
         }.get(configs.PLATFORM)
         selector_case_insensitive = {
             "android": f"//android.widget.TextView[lower-case(@text)='{text.lower()}']",
-            "ios": f"//*[@label='{text.lower()}' and @visible='true']"
+            "ios": f"//*[@label='{text.lower()}' and @visible='true']",
         }.get(configs.PLATFORM)
 
         selector = selector_strict if case_sensitive else selector_case_insensitive
         # Let's assume this method call when UI ready
         # so implicit timeout we set to 0 for make it fast
-        get_driver().implicitly_wait(0)
-        list_data = self.find_elements(by=By.XPATH, value=selector.format(text))
+        list_data = self.find_elements(by=By.XPATH, value=selector)
         # restore back implicit wait
-        get_driver().implicitly_wait(configs.IMPLICIT_WAIT)
         return list_data
 
     def has_text(self, text: str, case_sensitive=True) -> bool:
@@ -64,7 +62,7 @@ class Element:
         el = self._search_element()
         return el.__getitem__(item)
 
-    def _search_element(self) -> WebElementPatch:
+    def _search_element(self) -> MobileElementPatch:
         if not self.context:
             # if instance has no driver, fill it with current driver
             self.context = get_driver()
@@ -72,7 +70,7 @@ class Element:
         if not self.waiter:
             self.waiter = WebDriverWait(self.context, self.wait_time)
         el = self.waiter.until(EC.presence_of_element_located(self.selector))
-        el.__class__ = WebElementPatch
+        el.__class__ = MobileElementPatch
         return el
 
 
