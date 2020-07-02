@@ -1,8 +1,6 @@
-import subprocess
-
-from library import shell, configs
-from library.devices import get_device_id
-from library.parallel import IS_PARALLEL
+from library.mobile import shell, configs
+from library.mobile.devices import get_device_id
+from library.mobile.parallel import IS_PARALLEL
 
 ADB = "adb {}"
 if IS_PARALLEL:

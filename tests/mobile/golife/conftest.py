@@ -1,10 +1,8 @@
-from time import sleep
-
 import pytest
 
-from library import adb, configs
-from library.devices import get_device_id
-from library.drivers import get_driver, quit_driver, create_appium_session
+from library.mobile import configs
+from library.mobile.devices import get_device_id
+from library.mobile.drivers import quit_driver, create_appium_session
 
 GOLIFE_CAPS = None
 

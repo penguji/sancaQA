@@ -3,7 +3,7 @@ Classical "Page object model" approach
 Alternative "Direct module usage" Style as in login.py file
 """
 
-from library.ui import Element, Elements
+from library.mobile.ui import Element, Elements
 from screens.BaseScreens import Screens
 
 

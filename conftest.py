@@ -4,8 +4,8 @@ import pytest
 from applitools.common import MatchLevel
 from applitools.selenium import Eyes
 
-from library import configs
-from library.drivers import get_driver, quit_driver
+from library.mobile import configs
+from library.mobile.drivers import get_driver, quit_driver
 
 
 @pytest.fixture()

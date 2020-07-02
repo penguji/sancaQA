@@ -1,4 +1,4 @@
-from library.ui import Element
+from library.mobile.ui import Element
 
 SERVICE_GOMASSAGE = Element(android_by=('id', 'viewVertical1'))
 SERVICE_GOCLEAN = Element(android_by=('id', 'viewVertical2'))

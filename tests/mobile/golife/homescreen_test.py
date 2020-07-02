@@ -1,5 +1,5 @@
 from time import sleep
-from library import interactions as I
+from library.mobile import interactions as I
 from screens.golife import home, services
 
 
