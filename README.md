@@ -22,4 +22,4 @@ Simplify Mobile Automation Test
 
 
 ## Sample Test Run
-![goliferun](https://github.com/FachrulCH/kode.fachrul.id/blob/master/asset/sancaqa_golife.gif?raw=true)
+[![goliferun](https://github.com/FachrulCH/kode.fachrul.id/blob/master/asset/sancaqa_golife.png?raw=true)](https://youtu.be/xry7BTiCeE8)
