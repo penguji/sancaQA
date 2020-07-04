@@ -1,7 +1,6 @@
 from time import sleep
 
-from selenium.common.exceptions import (NoSuchElementException,
-                                        WebDriverException)
+from selenium.common.exceptions import NoSuchElementException, WebDriverException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -83,7 +82,9 @@ def is_element(element_or_elements):
 
 
 def open_notification():
-    pass
+    # Open Android notifications (Emulator only)
+    if configs.IS_ANDROID:
+        driver().open_notifications()
 
 
 def perform_swipe(x, y):
@@ -91,32 +92,65 @@ def perform_swipe(x, y):
 
 
 def set_network(mode: int):
-    """
+    """Sets the network connection type. Android only.
     0 // airplane mode off, wifi off, data off
     1 // airplane mode on, wifi off, data off
     2 // airplane mode off, wifi on, data off
     4 // airplane mode off, wifi off, data on
     6 // airplane mode off, wifi on, data on
     """
-    pass
+    driver().set_network_connection(mode)
 
 
 def set_orientation(orientation: str):
     # orientation ("LANDSCAPE" | "PORTRAIT")
-    pass
+    assert orientation in ["LANDSCAPE", "PORTRAIT"]
+    driver().orientation = orientation
 
 
 def shake_device():
-    pass
+    """Perform a shake action on the device"""
+    driver().shake()
 
 
-def start_activity(name: str):
-    pass
+def start_activity(app_package: str, app_activity: str):
+    """Start an Android activity by providing package name and activity name"""
+    driver().start_activity(app_package, app_activity)
 
 
-def swipe(direction: str):
+def swipe(direction: str, speed: str = "FAST"):
+    # Perform scrolling screen, using 80:20 of the screen size
     # direction (DOWN | UP | LEFT | RIGHT)
-    pass
+    # start from Opposite Direction, e.g swipe UP = start from down screen to up screen
+    assert direction in ["DOWN", "UP", "LEFT", "RIGHT"]
+    assert speed in ["FAST", "MEDIUM", "SLOWLY"]
+    duration = {"FAST": 500, "MEDIUM": 1000, "SLOWLY": 2000}.get(speed)
+    screen_size = driver().get_window_size()
+    width, height = int(screen_size["width"]), int(screen_size["height"])
+    from_x, to_x, from_y, to_y = 0, 0, 0, 0
+    if direction == "UP":
+        from_x = int(width * 0.5)  # center at screen 50%
+        to_x = from_x
+        from_y = int(height * 0.8)  # start 80% screen
+        to_y = int(height * 0.2)  # end 20% screen
+    elif direction == "DOWN":
+        from_x = int(width * 0.5)  # center at screen 50%
+        to_x = from_x
+        from_y = int(height * 0.2)  # start 20% screen
+        to_y = int(height * 0.8)  # end 80% screen
+
+    # driver().swipe(from_x, from_y, to_x, to_y, duration)
+    swipe_coordinate(from_x, from_y, to_x, to_y, duration)
+
+
+def swipe_coordinate(from_x: int, from_y: int, to_x: int, to_y: int, speed: int = 500):
+    driver().swipe(from_x, from_y, to_x, to_y, speed)
+    # from selenium.webdriver import TouchActions
+    # action = TouchActions(driver())
+    # action.tap_and_hold(from_x, from_y)
+    # action.move(to_x, to_y)
+    # action.release(to_x, to_y)
+    # action.perform()
 
 
 def swipe_to(at):
