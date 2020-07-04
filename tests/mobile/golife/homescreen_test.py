@@ -34,7 +34,7 @@ def test_navigation_menu():
 def test_swiping():
     I.wait_for_element(home.SEARCH_BAR, until=5)
     I.verify_see("Disinfektan")
-    I.swipe("UP", "SLOWLY")
+    I.swipe("UP", "SLOW")
     sleep(3)
     I.swipe("DOWN")
-    I.click(home.SEARCH_BAR)
+    sleep(2)

@@ -7,6 +7,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
 from library.mobile import configs, ui
+from library.mobile.configs import LOGGER
 from library.mobile.drivers import get_driver
 
 
@@ -14,7 +15,7 @@ def action_on_element(element, action, *args):
     getattr(element, action)(args)
 
 
-def as_element(something=None, at: tuple = None, raise_error=True):
+def _transform_element(something=None, at: tuple = None, raise_error=True):
     if something is None and at is not None:
         return driver().find_element(*at)
     if isinstance(something, tuple):
@@ -26,7 +27,8 @@ def as_element(something=None, at: tuple = None, raise_error=True):
 
 
 def click(text=None, at: tuple = None):
-    as_element(text, at).click()
+    LOGGER.info(f'==> Clicking {text}')
+    _transform_element(text, at).click()
     sleep(1)  # wait animation done
 
 
@@ -36,6 +38,7 @@ def driver():
 
 def find_text(something: str, inside_selector: tuple = None, raise_error=True):
     # when something is a text
+    LOGGER.info(f'==> Finding text: "{something}"')
     selector = {
         "android": f"//*[@text='{something}']",
         "ios": f"//*[@label='{something}' and @visible='true']",
@@ -54,6 +57,7 @@ def find_text(something: str, inside_selector: tuple = None, raise_error=True):
 
 
 def go_back():
+    LOGGER.info('==> Going back')
     driver().back()
 
 
@@ -62,11 +66,13 @@ def grab_orientation():
 
 
 def grab_text(at):
-    el = as_element(at)
+    LOGGER.info(f'==> Grabing text')
+    el = _transform_element(at)
     return el.text
 
 
 def hide_keyboard():
+    LOGGER.info(f'==> Hiding keyboard')
     sleep(1)
     # 'pressKey', 'Done'
     # driver().hide_keyboard(strategy='tapOutside')
@@ -83,6 +89,7 @@ def is_element(element_or_elements):
 
 def open_notification():
     # Open Android notifications (Emulator only)
+    LOGGER.info('==> Opening Notification')
     if configs.IS_ANDROID:
         driver().open_notifications()
 
@@ -99,6 +106,7 @@ def set_network(mode: int):
     4 // airplane mode off, wifi off, data on
     6 // airplane mode off, wifi on, data on
     """
+    LOGGER.info(f'==> Set network mode: {mode}')
     driver().set_network_connection(mode)
 
 
@@ -110,11 +118,13 @@ def set_orientation(orientation: str):
 
 def shake_device():
     """Perform a shake action on the device"""
+    LOGGER.info('==> Shake device')
     driver().shake()
 
 
 def start_activity(app_package: str, app_activity: str):
     """Start an Android activity by providing package name and activity name"""
+    LOGGER.info(f'==> Start activity {app_package}-{app_activity}')
     driver().start_activity(app_package, app_activity)
 
 
@@ -122,9 +132,10 @@ def swipe(direction: str, speed: str = "FAST"):
     # Perform scrolling screen, using 80:20 of the screen size
     # direction (DOWN | UP | LEFT | RIGHT)
     # start from Opposite Direction, e.g swipe UP = start from down screen to up screen
+    LOGGER.info(f'==> Swiping {direction} {speed}LY')
     assert direction in ["DOWN", "UP", "LEFT", "RIGHT"]
-    assert speed in ["FAST", "MEDIUM", "SLOWLY"]
-    duration = {"FAST": 500, "MEDIUM": 1000, "SLOWLY": 2000}.get(speed)
+    assert speed in ["FAST", "MEDIUM", "SLOW"]
+    duration = {"FAST": 500, "MEDIUM": 1000, "SLOW": 2000}.get(speed)
     screen_size = driver().get_window_size()
     width, height = int(screen_size["width"]), int(screen_size["height"])
     from_x, to_x, from_y, to_y = 0, 0, 0, 0
@@ -144,6 +155,7 @@ def swipe(direction: str, speed: str = "FAST"):
 
 
 def swipe_coordinate(from_x: int, from_y: int, to_x: int, to_y: int, speed: int = 500):
+    LOGGER.debug(f'==> Swipe coordiates {from_x, from_y, to_x, to_y, speed}')
     driver().swipe(from_x, from_y, to_x, to_y, speed)
     # from selenium.webdriver import TouchActions
     # action = TouchActions(driver())
@@ -162,12 +174,15 @@ def verify_current_activity(name: str):
 
 
 def verify_not_see(something, at: tuple = None):
-    is_found = as_element(something, at, False)
+    LOGGER.info(f'==> Should NOT see {something}')
+
+    is_found = _transform_element(something, at, False)
     assert not is_found, f"Element '{something}' should not visible"
 
 
 def verify_see(something, at: tuple = None):
-    is_found = as_element(something, at, False)
+    LOGGER.info(f'==> Should see {something}')
+    is_found = _transform_element(something, at, False)
     if is_found:
         assert is_found.is_displayed()
         return True
@@ -176,6 +191,7 @@ def verify_see(something, at: tuple = None):
 
 
 def wait_for_element(at, until: int = 3):
+    LOGGER.info(f'==> Wait for element {at} for {until}s')
     selector = at if not is_element(at) else at.selector
     assert isinstance(selector, tuple)
     waiter = WebDriverWait(driver(), until)
@@ -183,6 +199,7 @@ def wait_for_element(at, until: int = 3):
 
 
 def write(text, at=None, enter=False):
+    LOGGER.info(f'==> Writing {text} at {at}')
     if not at:
         raise Exception("Need given element/selector 'at'")
 
