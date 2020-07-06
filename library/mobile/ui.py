@@ -41,6 +41,7 @@ class Element:
     context: webdriver.Remote = None
     waiter = None
     wait_time: int = 1
+    found: int = 0
 
     def __init__(self, android_by: tuple = (), ios_by: tuple = (), wait_time: int = 1):
         self.wait_time = wait_time
@@ -80,7 +81,6 @@ class Elements(Element):
             # if instance has no driver, fill it with current driver
             self.context = get_driver()
 
-        if not self.waiter:
-            self.waiter = WebDriverWait(self.context, self.wait_time)
-
-        return self.waiter.until(EC.presence_of_all_elements_located(self.selector))
+        results = self.context.find_elements(*self.selector)
+        self.found = len(results)
+        return results

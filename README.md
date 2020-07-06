@@ -19,3 +19,7 @@ Simplify Mobile Automation Test
 ## Additional Stuff
 - I recommend to install [scrcpy](https://github.com/Genymobile/scrcpy) to ease monitoring device in computer using mirror device screen share
 - To find current activity/package info at android you can use command `adb shell dumpsys window windows | grep -E 'mCurrentFocus|mFocusedApp'`
+
+
+## Sample Test Run
+[![goliferun](https://github.com/FachrulCH/kode.fachrul.id/blob/master/asset/sancaqa_golife.png?raw=true)](https://youtu.be/xry7BTiCeE8)

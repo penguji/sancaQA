@@ -1,10 +1,12 @@
 import os
+import logging
 
 from dotenv import load_dotenv
 
 from library.mobile.devices import android_udid
 
 load_dotenv()
+LOGGER = logging.getLogger()
 
 APPIUM_TIMEOUT = 300
 APPIUM_SERVER = os.getenv("APPIUM_SERVER")
