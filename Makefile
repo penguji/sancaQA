@@ -15,7 +15,7 @@ isort: ## Run isort for sorting imports
 
 .PHONY: flake8
 flake8: ## Run flake8 for code checker
-	pipenv run flake8 $(ARGS)
+	pipenv run flake8 --show-source --statistics
 
 .PHONY: black
 black: ## Run black for code formater
