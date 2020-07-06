@@ -5,7 +5,7 @@ SERVICE_GOCLEAN = Element(android_by=("id", "viewVertical2"), wait_time=5)
 SERVICE_RIBBON = Element(android_by=("id", "ribbonBadge"))
 GOPAY_BALANCE = Element(android_by=("id", "tvGoPay"))
 SEARCH_BAR = Element(android_by=("id", "input"), wait_time=5)
-NAVIGATIONS_LABELS = Elements(android_by=('id', 'smallLabel'))
+NAVIGATIONS_LABELS = Elements(android_by=("id", "smallLabel"))
 
 
 def open_service(name: str):

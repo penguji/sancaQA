@@ -22,7 +22,8 @@ class SingletonFactory(object):
     @staticmethod
     def build(device_id, **constructor_args):
         """
-        Builds an instance of the given class pointer together with the provided constructor arguments.
+        Builds an instance of the given class pointer together
+        with the provided constructor arguments.
         Returns the SAME instance for a given class.
 
         :param device_id: A pointer to the device driver instance.
