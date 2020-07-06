@@ -16,7 +16,7 @@ def test_gomassage_service_should_be_closed():
 
 
 def test_navigation_menu():
-    I.wait_for_element(home.SEARCH_BAR, until=5)
+    I.wait_for_element(home.SERVICE_GOMASSAGE, until=5)
     I.verify_see("Disinfektan")
     I.tap("Pesanan")
     I.tap("Beranda")

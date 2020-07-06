@@ -9,21 +9,41 @@ from selenium.webdriver.support.wait import WebDriverWait
 from library.mobile import configs, ui
 from library.mobile.configs import LOGGER
 from library.mobile.drivers import get_driver
+from library.mobile.ui import Element
 
 
-def action_on_element(element, action, *args):
-    getattr(element, action)(args)
+def _selector_by_text(text: str):
+    return {
+        "android": f"//*[@text='{text}']",
+        "ios": f"//*[@label='{text}' and @visible='true']",
+    }.get(configs.PLATFORM)
 
 
-def _transform_element(something=None, at: tuple = None, raise_error=True):
-    if something is None and at is not None:
-        return driver().find_element(*at)
-    if isinstance(something, tuple):
-        return driver().find_element(*something)
-    if isinstance(something, str):
-        return find_text(something, at, raise_error)
-    if is_element(something):
-        return something
+def _transform_element(candidate=None, at: tuple = None, wait: int = 1) -> Element:
+    """Transforms a text or tuple into Element/s
+    sample usage:
+        _transform_element("Save")
+        _transform_element(('xpath', '//locator'))
+        _transform_element(home.SEARCH_INPUT)
+    """
+
+    if is_element(candidate):
+        if wait > candidate.wait_time:
+            # when new wait is bigger than default
+            LOGGER.warning(f"=====> Updating wait time {candidate.wait_time} => {wait}")
+            candidate.wait_time = wait
+        LOGGER.info(f'    by selector: "{candidate.selector}"')
+        return candidate
+
+    el = Element(wait_time=wait)
+    if at and candidate is None:
+        el.selector = at
+    if isinstance(candidate, tuple):
+        el.selector = candidate
+    if isinstance(candidate, str):
+        el.selector = ('xpath', _selector_by_text(candidate))
+    LOGGER.info(f'    by Selector: "{el.selector}"')
+    return el
 
 
 def click(text=None, at: tuple = None):
@@ -32,33 +52,29 @@ def click(text=None, at: tuple = None):
     sleep(1)  # wait animation done
 
 
-def driver():
-    return get_driver()
-
-
-def find_text(something: str, inside_selector: tuple = None, raise_error=True):
+def find_text(text: str, inside_selector: tuple = None, raise_error=True):
     # when something is a text
-    LOGGER.info(f'==> Finding text: "{something}"')
+    LOGGER.info(f'==> Finding text: "{text}"')
     selector = {
-        "android": f"//*[@text='{something}']",
-        "ios": f"//*[@label='{something}' and @visible='true']",
+        "android": f"//*[@text='{text}']",
+        "ios": f"//*[@label='{text}' and @visible='true']",
     }.get(configs.PLATFORM)
     context = (
-        driver() if not inside_selector else driver().find_element(inside_selector)
+        get_driver() if not inside_selector else get_driver().find_element(inside_selector)
     )
     elements = context.find_elements(by=By.XPATH, value=selector)
     if len(elements) > 0:
         return elements[0]
     else:
         if raise_error:
-            raise NoSuchElementException(f'Element by text "{something}" is not found')
+            raise NoSuchElementException(f'Element by text "{text}" is not found')
         else:
             return False
 
 
 def go_back():
     LOGGER.info('==> Going back')
-    driver().back()
+    get_driver().back()
 
 
 def grab_orientation():
@@ -66,16 +82,16 @@ def grab_orientation():
 
 
 def grab_text(at):
-    LOGGER.info(f'==> Grabing text')
+    LOGGER.info(f'==> Grabing text {at}')
     el = _transform_element(at)
     return el.text
 
 
 def hide_keyboard():
-    LOGGER.info(f'==> Hiding keyboard')
+    LOGGER.info('==> Hiding keyboard')
     sleep(1)
     # 'pressKey', 'Done'
-    # driver().hide_keyboard(strategy='tapOutside')
+    # get_driver().hide_keyboard(strategy='tapOutside')
 
 
 def is_element(element_or_elements):
@@ -88,10 +104,10 @@ def is_element(element_or_elements):
 
 
 def open_notification():
-    # Open Android notifications (Emulator only)
+    """ Open Android notifications (Emulator only)"""
     LOGGER.info('==> Opening Notification')
     if configs.IS_ANDROID:
-        driver().open_notifications()
+        get_driver().open_notifications()
 
 
 def perform_swipe(x, y):
@@ -107,25 +123,25 @@ def set_network(mode: int):
     6 // airplane mode off, wifi on, data on
     """
     LOGGER.info(f'==> Set network mode: {mode}')
-    driver().set_network_connection(mode)
+    get_driver().set_network_connection(mode)
 
 
 def set_orientation(orientation: str):
     # orientation ("LANDSCAPE" | "PORTRAIT")
     assert orientation in ["LANDSCAPE", "PORTRAIT"]
-    driver().orientation = orientation
+    get_driver().orientation = orientation
 
 
 def shake_device():
     """Perform a shake action on the device"""
     LOGGER.info('==> Shake device')
-    driver().shake()
+    get_driver().shake()
 
 
 def start_activity(app_package: str, app_activity: str):
     """Start an Android activity by providing package name and activity name"""
     LOGGER.info(f'==> Start activity {app_package}-{app_activity}')
-    driver().start_activity(app_package, app_activity)
+    get_driver().start_activity(app_package, app_activity)
 
 
 def swipe(direction: str, speed: str = "FAST"):
@@ -136,7 +152,7 @@ def swipe(direction: str, speed: str = "FAST"):
     assert direction in ["DOWN", "UP", "LEFT", "RIGHT"]
     assert speed in ["FAST", "MEDIUM", "SLOW"]
     duration = {"FAST": 500, "MEDIUM": 1000, "SLOW": 2000}.get(speed)
-    screen_size = driver().get_window_size()
+    screen_size = get_driver().get_window_size()
     width, height = int(screen_size["width"]), int(screen_size["height"])
     from_x, to_x, from_y, to_y = 0, 0, 0, 0
     if direction == "UP":
@@ -150,15 +166,15 @@ def swipe(direction: str, speed: str = "FAST"):
         from_y = int(height * 0.2)  # start 20% screen
         to_y = int(height * 0.8)  # end 80% screen
 
-    # driver().swipe(from_x, from_y, to_x, to_y, duration)
+    # get_driver().swipe(from_x, from_y, to_x, to_y, duration)
     swipe_coordinate(from_x, from_y, to_x, to_y, duration)
 
 
 def swipe_coordinate(from_x: int, from_y: int, to_x: int, to_y: int, speed: int = 500):
     LOGGER.debug(f'==> Swipe coordiates {from_x, from_y, to_x, to_y, speed}')
-    driver().swipe(from_x, from_y, to_x, to_y, speed)
+    get_driver().swipe(from_x, from_y, to_x, to_y, speed)
     # from selenium.webdriver import TouchActions
-    # action = TouchActions(driver())
+    # action = TouchActions(get_driver())
     # action.tap_and_hold(from_x, from_y)
     # action.move(to_x, to_y)
     # action.release(to_x, to_y)
@@ -173,29 +189,27 @@ def verify_current_activity(name: str):
     pass
 
 
-def verify_not_see(something, at: tuple = None):
-    LOGGER.info(f'==> Should NOT see {something}')
+def verify_not_see(text_or_elements, at: tuple = None):
+    LOGGER.info('==> Should NOT see')
+    is_found = _transform_element(text_or_elements, at, False)
+    LOGGER.info(f'    "{is_found.selector}"')
 
-    is_found = _transform_element(something, at, False)
-    assert not is_found, f"Element '{something}' should not visible"
+    assert not is_found, f"Element '{text_or_elements}' should not visible"
 
 
-def verify_see(something, at: tuple = None):
-    LOGGER.info(f'==> Should see {something}')
-    is_found = _transform_element(something, at, False)
-    if is_found:
-        assert is_found.is_displayed()
+def verify_see(text_or_elements, at: tuple = None):
+    LOGGER.info(f'==> Should see')
+    el = _transform_element(text_or_elements, at)
+    if el.is_displayed():
         return True
     else:
-        raise WebDriverException(f"Element {something} should visible")
+        raise WebDriverException(f"Element {text_or_elements} should be visible")
 
 
 def wait_for_element(at, until: int = 3):
-    LOGGER.info(f'==> Wait for element {at} for {until}s')
-    selector = at if not is_element(at) else at.selector
-    assert isinstance(selector, tuple)
-    waiter = WebDriverWait(driver(), until)
-    return waiter.until(EC.presence_of_element_located(selector))
+    LOGGER.info(f'==> Wait for element for {until}s')
+    el = _transform_element(at, wait=until)
+    el.is_displayed()
 
 
 def write(text, at=None, enter=False):
@@ -203,12 +217,7 @@ def write(text, at=None, enter=False):
     if not at:
         raise Exception("Need given element/selector 'at'")
 
-    element = None
-    if is_element(at):
-        element = at
-    if isinstance(at, tuple):
-        # when context is locator
-        element = driver().find_element(*at)
+    element = _transform_element(at)
     element.send_keys(text)
     if enter:
         element.send_keys(Keys.ENTER)
