@@ -28,12 +28,18 @@ def test_navigation_menu():
     I.click(at=("id", "input"))
     I.write("mobil", at=("id", "input"))
     I.go_back()
-    I.verify_not_see("Disinfektannnn")
 
 
 def test_swiping():
     I.wait_for_element(home.SEARCH_BAR, until=5)
+    I.tap("Pesanan")
+    I.tap("Beranda")
+    I.wait_for_element(home.SEARCH_BAR, until=5)
     I.verify_see("Disinfektan")
+    I.verify_not_see("Disinfektannnn")
+    for nav in home.NAVIGATIONS_LABELS:
+        nav.click()
+    I.tap("Beranda")
     I.swipe("UP", "SLOW")
     sleep(3)
     I.swipe("DOWN")

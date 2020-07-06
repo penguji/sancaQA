@@ -9,7 +9,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from library.mobile import configs, ui
 from library.mobile.configs import LOGGER
 from library.mobile.drivers import get_driver
-from library.mobile.ui import Element
+from library.mobile.ui import Element, Elements
 
 
 def _selector_by_text(text: str):
@@ -19,7 +19,7 @@ def _selector_by_text(text: str):
     }.get(configs.PLATFORM)
 
 
-def _transform_element(candidate=None, at: tuple = None, wait: int = 1) -> Element:
+def _transform_element(candidate=None, at: tuple = None, wait: int = 1, return_array: bool = False):
     """Transforms a text or tuple into Element/s
     sample usage:
         _transform_element("Save")
@@ -35,15 +35,19 @@ def _transform_element(candidate=None, at: tuple = None, wait: int = 1) -> Eleme
         LOGGER.info(f'    by selector: "{candidate.selector}"')
         return candidate
 
-    el = Element(wait_time=wait)
+    selector = None
     if at and candidate is None:
-        el.selector = at
+        selector = at
     if isinstance(candidate, tuple):
-        el.selector = candidate
+        selector = candidate
     if isinstance(candidate, str):
-        el.selector = ('xpath', _selector_by_text(candidate))
-    LOGGER.info(f'    by Selector: "{el.selector}"')
-    return el
+        selector = ('xpath', _selector_by_text(candidate))
+
+    LOGGER.info(f'    by Selector: "{selector}"')
+    if return_array:
+        return Elements(android_by=selector, ios_by=selector, wait_time=wait)
+    else:
+        return Element(android_by=selector, ios_by=selector, wait_time=wait)
 
 
 def click(text=None, at: tuple = None):
@@ -191,19 +195,16 @@ def verify_current_activity(name: str):
 
 def verify_not_see(text_or_elements, at: tuple = None):
     LOGGER.info('==> Should NOT see')
-    is_found = _transform_element(text_or_elements, at, False)
-    LOGGER.info(f'    "{is_found.selector}"')
-
-    assert not is_found, f"Element '{text_or_elements}' should not visible"
+    sleep(1)  # wait animation
+    elements = _transform_element(text_or_elements, at, return_array=True)
+    assert not elements.found, f"Element '{text_or_elements}' should NOT BE visible"
 
 
 def verify_see(text_or_elements, at: tuple = None):
     LOGGER.info(f'==> Should see')
-    el = _transform_element(text_or_elements, at)
-    if el.is_displayed():
-        return True
-    else:
-        raise WebDriverException(f"Element {text_or_elements} should be visible")
+    sleep(1)  # wait animation
+    el = _transform_element(text_or_elements, at, return_array=True)
+    assert el.found > 0, f"Element {el.selector} is NOT visible"
 
 
 def wait_for_element(at, until: int = 3):
