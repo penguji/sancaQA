@@ -1,6 +1,6 @@
 from time import sleep
 
-from library.mobile import interactions as I
+from library.mobile import interactions as I  # noqa
 from screens.golife import home, services
 
 
