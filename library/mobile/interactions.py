@@ -12,14 +12,20 @@ from library.mobile.drivers import get_driver
 from library.mobile.ui import Element, Elements
 
 
-def _selector_by_text(text: str):
-    return {
+def _selector_by_text(text: str, case_sensitive=True):
+    selector_strict = {
         "android": f"//*[@text='{text}']",
         "ios": f"//*[@label='{text}' and @visible='true']",
     }.get(configs.PLATFORM)
+    selector_case_insensitive = {
+        "android": f"//*[lower-case(@text)='{text.lower()}']",
+        "ios": f"//*[@label='{text.lower()}' and @visible='true']",
+    }.get(configs.PLATFORM)
+
+    return selector_strict if case_sensitive else selector_case_insensitive
 
 
-def _transform_element(candidate=None, at: tuple = None, wait: int = 1, return_array: bool = False):
+def _transform_element(candidate=None, at: tuple = None, wait: int = 1, return_array: bool = False, case_sensitive=True):
     """Transforms a text or tuple into Element/s
     sample usage:
         _transform_element("Save")
@@ -41,7 +47,7 @@ def _transform_element(candidate=None, at: tuple = None, wait: int = 1, return_a
     if isinstance(candidate, tuple):
         selector = candidate
     if isinstance(candidate, str):
-        selector = ('xpath', _selector_by_text(candidate))
+        selector = ('xpath', _selector_by_text(candidate, case_sensitive=case_sensitive))
 
     LOGGER.info(f'    by Selector: "{selector}"')
     if return_array:
@@ -193,17 +199,17 @@ def verify_current_activity(name: str):
     pass
 
 
-def verify_not_see(text_or_elements, at: tuple = None):
+def verify_not_see(text_or_elements, at: tuple = None, case_sensitive=True):
     LOGGER.info('==> Should NOT see')
-    sleep(1)  # wait animation
-    elements = _transform_element(text_or_elements, at, return_array=True)
+    sleep(2)  # wait animation
+    elements = _transform_element(text_or_elements, at, return_array=True, case_sensitive=case_sensitive)
     assert not elements.found, f"Element '{text_or_elements}' should NOT BE visible"
 
 
-def verify_see(text_or_elements, at: tuple = None):
+def verify_see(text_or_elements, at: tuple = None, case_sensitive=True):
     LOGGER.info(f'==> Should see')
-    sleep(1)  # wait animation
-    el = _transform_element(text_or_elements, at, return_array=True)
+    sleep(2)  # wait animation
+    el = _transform_element(text_or_elements, at, return_array=True, case_sensitive=case_sensitive)
     assert el.found > 0, f"Element {el.selector} is NOT visible"
 
 

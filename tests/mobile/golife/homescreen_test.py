@@ -36,6 +36,7 @@ def test_swiping():
     I.tap("Beranda")
     I.wait_for_element(home.SEARCH_BAR, until=5)
     I.verify_see("Disinfektan")
+    I.verify_see("DISINFEKTAN", case_sensitive=False)
     I.verify_not_see("Disinfektannnn")
     for nav in home.NAVIGATIONS_LABELS:
         nav.click()
